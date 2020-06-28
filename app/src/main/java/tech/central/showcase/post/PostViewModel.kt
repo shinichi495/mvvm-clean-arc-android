@@ -24,7 +24,7 @@ class PostViewModel @Inject constructor(
 
     private val postsLiveData by lazy { MutableLiveData<List<PostInfor>>(null) }
 
-    val sortTypeLiveData by lazy { MutableLiveData<String>("ascending") }
+    val sortTypeLiveData by lazy { MutableLiveData<String>() }
 
     val completedLoad by lazy { MutableLiveData<Boolean>(false) }
 
@@ -44,6 +44,7 @@ class PostViewModel @Inject constructor(
                                 completedLoad.value = true
                             }, onComplete = {
                         completedLoad.value = false
+                        sortTypeLiveData.value = "ascending"
                     })
         }
         return postsLiveData
