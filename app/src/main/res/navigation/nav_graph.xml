@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="tech.central.showcase.dashboard.DashboardFragment"
+        android:label="@string/dashboard"
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_photoFragment"
+            app:destination="@id/photoFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_postFragment"
+            app:destination="@id/postFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoFragment"
+        android:name="tech.central.showcase.photo.PhotoFragment"
+        android:label="@string/photo"
+        tools:layout="@layout/fragment_photo">
+        <action
+            android:id="@+id/action_photoFragment_to_photoDetailFragment"
+            app:destination="@id/photoDetailFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoDetailFragment"
+        android:name="tech.central.showcase.photo_detail.PhotoDetailFragment"
+        android:label="@string/photo_detail"
+        tools:layout="@layout/fragment_photo_detail">
+        <argument
+            android:name="photo"
+            app:argType="tech.central.showcase.base.model.Photo" />
+    </fragment>
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="tech.central.showcase.post.PostFragment"
+        android:label="PostFragment" >
+        <action
+            android:id="@+id/action_postFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/postDetailFragment"
+        android:name="tech.central.showcase.post_detail.PostDetailFragment"
+        android:label="PostDetailFragment" >
+        <argument
+            android:name="post"
+            app:argType="tech.central.showcase.base.model.PostInfor" />
+    </fragment>
+</navigation>

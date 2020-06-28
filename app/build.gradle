@@ -1,0 +1,252 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'androidx.navigation.safeargs.kotlin'
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+    maven { url 'http://repo.eaio.com/maven2' }
+    maven { url "https://dl.bintray.com/drummer-aidan/maven/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
+
+android {
+    def mApplicationId = "tech.central.showcase"
+    def mVersionName = "1.0.0"
+
+    useLibrary 'org.apache.http.legacy'
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
+
+    compileSdkVersion 29
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
+    }
+
+    defaultConfig {
+        applicationId mApplicationId
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName mVersionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary true
+
+        buildConfigField "String", "MOCK_ENDPOINT", '"https://jsonplaceholder.typicode.com/"'
+    }
+
+    dexOptions {
+        preDexLibraries true
+        maxProcessCount 8
+    }
+
+    signingConfigs {
+
+    }
+
+    buildTypes {
+        debug {
+            ext.alwaysUpdateBuildId = false
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "api"
+
+    productFlavors {
+        dev {
+            signingConfig signingConfigs.debug
+            minSdkVersion 21
+            versionName mVersionName + "-DEV"
+            dimension "api"
+        }
+        prod {
+            signingConfig signingConfigs.debug
+            dimension "api"
+        }
+    }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+
+        if ((names.contains("dev") && variant.buildType.name == "release")) {
+            variant.ignore = true
+        }
+    }
+
+    testOptions {
+        execution 'ANDROID_TEST_ORCHESTRATOR'
+        animationsDisabled = true
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
+    }
+}
+
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
+ext {
+    supportLibraryVersion = '1.2.0'
+    archLifecycleVersion = '2.2.0'
+    pagingVersion = '2.1.2'
+    roomVersion = '2.2.5'
+    glideVersion = '4.11.0'
+    retrofitVersion = '2.9.0'
+    daggerVersion = '2.28'
+    assistedInjectVersion = '0.5.2'
+    workManagerVersion = '1.0.1'
+    arrowVersion = '0.10.5'
+    epoxyVersion = '3.11.0'
+    okHttpVersion = '4.7.2'
+    mockitoVersion = '3.3.3'
+    robolectricVersion = '4.3.1'
+    fragmentVersion = '1.2.4'
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Google Library
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.browser:browser:$supportLibraryVersion"
+    implementation "androidx.legacy:legacy-preference-v14:1.0.0"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
+    implementation "com.google.android.material:material:1.1.0"
+    kapt "androidx.annotation:annotation:1.1.0"
+
+    //Play Services
+    implementation 'com.google.android.gms:play-services-base:17.2.1'
+
+    //Architecture Components
+    implementation "androidx.lifecycle:lifecycle-extensions:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$archLifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$archLifecycleVersion"
+    implementation "androidx.paging:paging-runtime:$pagingVersion"
+    implementation "android.arch.work:work-runtime-ktx:$workManagerVersion"
+    implementation "android.arch.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation "android.arch.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
+    debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
+
+    //Room
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-rxjava2:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7'
+    implementation "io.arrow-kt:arrow-core:$arrowVersion"
+
+    //Networking
+    implementation 'com.squareup.okio:okio:2.6.0'
+    implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation('com.github.ihsanbal:LoggingInterceptor:3.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    //RX
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.github.akarnokd:rxjava2-extensions:0.20.10'
+    implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.2.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:2.2.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.2.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-recyclerview-v7:2.2.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.2.0'
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    implementation 'com.github.whalemare:RxValidator2:1.3'
+
+    //Dagger
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assistedInjectVersion"
+    kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assistedInjectVersion"
+
+    //Glide
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
+    implementation("com.github.bumptech.glide:recyclerview-integration:$glideVersion") {
+        transitive = false
+    }
+
+    //Others
+    implementation "com.airbnb.android:epoxy:$epoxyVersion"
+    kapt "com.airbnb.android:epoxy-processor:$epoxyVersion"
+    implementation 'com.pddstudio:encrypted-preferences:1.3.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    //Test
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'androidx.test:core-ktx:1.2.0'
+    testImplementation "androidx.test:runner:1.2.0"
+    testImplementation "androidx.test.ext:junit:1.1.1"
+    testImplementation "androidx.test.ext:truth:1.2.0"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-inline:$mockitoVersion"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
+    testImplementation "com.google.dagger:dagger:$daggerVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:shadowapi:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-playservices:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-httpclient:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
+    kaptTest "com.google.dagger:dagger-compiler:$daggerVersion"
+    kaptTest "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+    androidTestImplementation "org.mockito:mockito-core:$mockitoVersion"
+    androidTestImplementation "org.mockito:mockito-inline:$mockitoVersion"
+    androidTestImplementation 'com.jakewharton.espresso:okhttp3-idling-resource:1.0.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestImplementation "com.google.dagger:dagger:$daggerVersion"
+    androidTestUtil 'androidx.test:orchestrator:1.2.0'
+    kaptAndroidTest "com.google.dagger:dagger-compiler:$daggerVersion"
+    kaptAndroidTest "com.google.dagger:dagger-android-processor:$daggerVersion"
+}
+
+androidExtensions {
+    experimental = true
+}
