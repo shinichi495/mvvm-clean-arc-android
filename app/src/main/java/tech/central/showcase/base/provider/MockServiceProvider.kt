@@ -1,6 +1,7 @@
 package tech.central.showcase.base.provider
 
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 import tech.central.showcase.base.model.Photo
 import tech.central.showcase.base.model.Post
@@ -22,11 +23,11 @@ class MockServiceProvider @Inject constructor(
         return mockService.photos()
     }
 
-    fun users() : Flowable<List<User>> {
+    fun users() : Observable<List<User>> {
         return mockService.users()
     }
 
-    fun posts() : Flowable<List<Post>> {
+    fun posts() : Observable<List<Post>> {
         return mockService.posts()
     }
 }

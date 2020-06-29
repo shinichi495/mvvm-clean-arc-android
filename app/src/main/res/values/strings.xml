@@ -11,4 +11,8 @@
 
     <string name="post_detail_body">Body</string>
 
+    <string name="post_ascending">A-Z</string>
+    <string name="post_descending">Z-A</string>
+
+
 </resources>

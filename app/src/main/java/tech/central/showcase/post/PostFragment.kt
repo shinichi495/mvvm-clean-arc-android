@@ -54,22 +54,13 @@ class PostFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        mPostViewModel.loadPosts().observe(viewLifecycleOwner, Observer {
-            mPostController.setData(it)
-        })
-
-        mPostViewModel.completedLoad().observe(viewLifecycleOwner, Observer { completed ->
-                if (completed) {
-                    Toast.makeText(context, getString(R.string.post_loaded), Toast.LENGTH_SHORT).show()
-                }
-        })
+        observerViewModel()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater?.inflate(R.menu.menu, menu)
         val sortAction = menu?.findItem(R.id.sortAction);
         sortAction?.setVisible(true);
-
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -94,5 +85,27 @@ class PostFragment : BaseFragment() {
                         onError = {},
                         onNext = findNavController()::navigate
                 )
+    }
+
+    private fun observerViewModel() {
+        mPostViewModel.loadPosts().observe(viewLifecycleOwner, Observer {
+            mPostController.setData(it)
+        })
+
+        mPostViewModel.completedLoad().observe(viewLifecycleOwner, Observer { completed ->
+            if (completed) {
+                Toast.makeText(context, getString(R.string.post_loaded), Toast.LENGTH_SHORT).show()
+            }
+        })
+        mPostViewModel.sortType().observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled().let { type ->
+                if (type == "ascending") {
+                    Toast.makeText(context, getString(R.string.post_ascending), Toast.LENGTH_SHORT).show()
+                } else if (type == "descending") {
+                    Toast.makeText(context, getString(R.string.post_descending), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
     }
 }

@@ -1,6 +1,7 @@
 package tech.central.showcase.base.service
 
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.GET
 import tech.central.showcase.base.model.Photo
@@ -18,8 +19,8 @@ interface MockService {
 
 
     @GET("users")
-    fun users () : Flowable<List<User>>
+    fun users () : Observable<List<User>>
 
     @GET("posts")
-    fun posts () : Flowable<List<Post>>
+    fun posts () : Observable<List<Post>>
 }

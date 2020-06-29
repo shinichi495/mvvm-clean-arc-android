@@ -10,6 +10,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import tech.central.showcase.base.SchedulersFacade
 import tech.central.showcase.base.model.PostInfor
 import tech.central.showcase.post.usecase.LoadPostUseCase
+import tech.central.showcase.post.wrapper.Event
 import javax.inject.Inject
 
 class PostViewModel @Inject constructor(
@@ -18,9 +19,9 @@ class PostViewModel @Inject constructor(
         private val schedulersFacede: SchedulersFacade
 ) : AndroidViewModel(application) {
 
-    private val postsLiveData by lazy { MutableLiveData<List<PostInfor>>(null) }
+    val postsLiveData by lazy { MutableLiveData<List<PostInfor>>(null) }
 
-    private var sortType = "descending"
+    val _sortType by lazy { MutableLiveData<Event<String>>() }
 
     private val completedLoad by lazy { MutableLiveData<Boolean>() }
 
@@ -29,33 +30,37 @@ class PostViewModel @Inject constructor(
     fun loadPosts(): LiveData<List<PostInfor>> {
         if (postsLiveData.value.isNullOrEmpty()) {
             diposables += loadPostUseCase.execute()
-                    .subscribeOn(schedulersFacede.io)
                     .observeOn(schedulersFacede.ui)
                     .subscribeBy(
                             onError = {
-                                postsLiveData.value = emptyList()
+                                postsLiveData.postValue(emptyList())
                             },
                             onNext = { post ->
-                                postsLiveData.value = post
-                                completedLoad.value = true
+                                postsLiveData.postValue(post)
+                                completedLoad.postValue(true)
                             }, onComplete = {
-                                completedLoad.value = false
-                                sort()
-                            })
+                                completedLoad.postValue(false)
+                    })
         }
         return postsLiveData
     }
 
-    fun completedLoad () : LiveData<Boolean> {
-        return completedLoad
-    }
-
     fun sort() {
         if (postsLiveData.value != null) {
-            sortType = if (sortType.equals("ascending")) "descending" else "ascending"
+            this._sortType.value = if (_sortType.value?.peekContent().equals("ascending")) Event("descending")
+                                        else Event("ascending")
             val lstPost = postsLiveData.value
-            postsLiveData.value = if (sortType.equals("ascending")) lstPost?.sortedBy { it.title } else lstPost?.sortedByDescending { it.title }
+            postsLiveData.value = if (_sortType.value?.peekContent().equals("ascending")) lstPost?.sortedBy { it.title }
+                                    else lstPost?.sortedByDescending { it.title }
         }
+    }
+
+    fun sortType(): LiveData<Event<String>> {
+        return _sortType
+    }
+
+    fun completedLoad(): LiveData<Boolean> {
+        return completedLoad
     }
 
     override fun onCleared() {
