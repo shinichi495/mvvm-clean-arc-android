@@ -35,7 +35,6 @@ class PostDetailFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(false)
-        activity.setTitle(getString(R.string.post_detail))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

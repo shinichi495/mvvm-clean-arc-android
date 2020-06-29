@@ -86,7 +86,6 @@ class PostFragment : BaseFragment() {
     }
 
     private fun initView() {
-        activity.setTitle(getString(R.string.post))
         mLayoutManager = mLayoutManagerProvider.get()
         rcPosts.apply {
             adapter = mPostController.adapter

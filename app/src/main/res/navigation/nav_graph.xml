@@ -46,7 +46,7 @@
     <fragment
         android:id="@+id/postFragment"
         android:name="tech.central.showcase.post.PostFragment"
-        android:label="PostFragment" >
+        android:label= "Post" >
         <action
             android:id="@+id/action_postFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment"
@@ -58,7 +58,7 @@
     <fragment
         android:id="@+id/postDetailFragment"
         android:name="tech.central.showcase.post_detail.PostDetailFragment"
-        android:label="PostDetailFragment" >
+        android:label="Post Detail" >
         <argument
             android:name="post"
             app:argType="tech.central.showcase.base.model.PostInfor" />
