@@ -57,7 +57,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun sort() {
+    fun sort()  {
         sortTypeLiveData.value = if (sortTypeLiveData.value.equals("ascending")) "descending" else "ascending"
     }
 

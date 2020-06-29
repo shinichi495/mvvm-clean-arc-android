@@ -1,7 +1,9 @@
 package tech.central.showcase.post.usecase
 
 import io.reactivex.Flowable
+import io.reactivex.Scheduler
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import tech.central.showcase.base.model.Post
 import tech.central.showcase.base.model.PostInfor
 import tech.central.showcase.base.model.User
@@ -13,9 +15,9 @@ class LoadPostUseCase @Inject constructor(
 ) {
     fun execute(): Flowable<List<PostInfor>> {
 
-        val posts = mockServiceProvider.posts()
+        val posts = mockServiceProvider.posts().subscribeOn(Schedulers.newThread())
 
-        val users = mockServiceProvider.users()
+        val users = mockServiceProvider.users().subscribeOn(Schedulers.newThread())
 
         return Flowable.zip(posts, users, BiFunction<List<Post>, List<User>, List<PostInfor>> { lstPost, lstUser ->
             combine(lstPost, lstUser)
