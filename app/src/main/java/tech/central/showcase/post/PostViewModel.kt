@@ -8,7 +8,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import tech.central.showcase.base.SchedulersFacade
-import tech.central.showcase.base.model.Post
 import tech.central.showcase.base.model.PostInfor
 import tech.central.showcase.post.usecase.LoadPostUseCase
 import javax.inject.Inject
@@ -18,15 +17,12 @@ class PostViewModel @Inject constructor(
         private val loadPostUseCase: LoadPostUseCase,
         private val schedulersFacede: SchedulersFacade
 ) : AndroidViewModel(application) {
-    companion object {
-        private val TAG = PostViewModel::class.java.simpleName
-    }
 
     private val postsLiveData by lazy { MutableLiveData<List<PostInfor>>(null) }
 
-    val sortTypeLiveData by lazy { MutableLiveData<String>() }
+    private var sortType = "descending"
 
-    val completedLoad by lazy { MutableLiveData<Boolean>(false) }
+    private val completedLoad by lazy { MutableLiveData<Boolean>() }
 
     private val diposables by lazy { CompositeDisposable() }
 
@@ -43,24 +39,24 @@ class PostViewModel @Inject constructor(
                                 postsLiveData.value = post
                                 completedLoad.value = true
                             }, onComplete = {
-                        completedLoad.value = false
-                        sortTypeLiveData.value = "ascending"
-                    })
+                                completedLoad.value = false
+                                sort()
+                            })
         }
         return postsLiveData
     }
 
-    fun sort(type: String) {
+    fun completedLoad () : LiveData<Boolean> {
+        return completedLoad
+    }
+
+    fun sort() {
         if (postsLiveData.value != null) {
+            sortType = if (sortType.equals("ascending")) "descending" else "ascending"
             val lstPost = postsLiveData.value
-            postsLiveData.value = if (type.equals("ascending")) lstPost?.sortedBy { it.title } else lstPost?.sortedByDescending { it.title }
+            postsLiveData.value = if (sortType.equals("ascending")) lstPost?.sortedBy { it.title } else lstPost?.sortedByDescending { it.title }
         }
     }
-
-    fun sort()  {
-        sortTypeLiveData.value = if (sortTypeLiveData.value.equals("ascending")) "descending" else "ascending"
-    }
-
 
     override fun onCleared() {
         diposables.clear()

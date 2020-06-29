@@ -57,15 +57,11 @@ class PostFragment : BaseFragment() {
         mPostViewModel.loadPosts().observe(viewLifecycleOwner, Observer {
             mPostController.setData(it)
         })
-        mPostViewModel.sortTypeLiveData.observe(viewLifecycleOwner, Observer {
-            mPostViewModel.sort(it)
-        })
 
-        mPostViewModel.completedLoad.observe(viewLifecycleOwner, Observer { completed ->
+        mPostViewModel.completedLoad().observe(viewLifecycleOwner, Observer { completed ->
                 if (completed) {
                     Toast.makeText(context, getString(R.string.post_loaded), Toast.LENGTH_SHORT).show()
                 }
-
         })
     }
 
